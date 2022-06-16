@@ -30,9 +30,13 @@ The police know that bank robbers usually take pictures of banks that they plan 
 To catch the bad guy and prevent future robberies, your goal is to reconstruct all pictures (jpg files only) in the disk images and make the subject regret not taking CS 537 in the past. Of course, you may understand the regret of taking 537.
 
 2) Project Specification
-You need to write a program called runscan that takes two arguments, an input file that contains the disk image and an output directory where your output files will be stored. The tasks of your program are as follows:
+You need to write a program called runscan that takes two arguments, an input file that contains the disk image and an output directory where your output files will be
+stored. The tasks of your program are as follows:
 
-First, you need to reconstruct all jpg files (both undeleted and deleted ones) from a given disk image. To do this, you need to scan all inodes that represent regular files and check if the first data block of the inode contains the jpg magic numbers: FF D8 FF E0 or FF D8 FF E1 or FF D8 FF E8. (For more about file signatures, you can visit this page (Links to an external site.) ). For example, if you read the first data block of a file and put it in char buffer [1024] , then this code will identify whether it is a jpg file or not:
+First, you need to reconstruct all jpg files (both undeleted and deleted ones) from a given disk image. To do this, you need to scan all inodes that represent regular
+files and check if the first data block of the inode contains the jpg magic numbers: FF D8 FF E0 or FF D8 FF E1 or FF D8 FF E8. (For more about file signatures, you 
+can visit this page (Links to an external site.) ). For example, if you read the first data block of a file and put it in char buffer [1024] , then this code will 
+identify whether it is a jpg file or not:
 
 int is_jpg = 0;
 if (buffer[0] == (char)0xff &&
@@ -43,18 +47,26 @@ if (buffer[0] == (char)0xff &&
      buffer[3] == (char)0xe8)) {
 	 is_jpg = 1;
 }
-Once you identify an inode that represents a jpg file, you should copy the content of that file to an output file (stored in your 'output/' directory), using the inode number as the file name. For example, if you detect that inode number 18 is a jpg file, you should create a file 'output/file-18.jpg' which will contain the exact data reachable from inode 18. (See the Example section below for more).
+Once you identify an inode that represents a jpg file, you should copy the content of that file to an output file (stored in your 'output/' directory), using the inode 
+number as the file name. For example, if you detect that inode number 18 is a jpg file, you should create a file 'output/file-18.jpg' which will contain the exact 
+data reachable from inode 18. (See the Example section below for more).
 
-The second part of your task is to find out the filenames of those inodes that represent the jpg files. Note that filenames are not stored in inodes, but in directory data blocks. Thus, after you get the inode numbers of the jpg files, you should scan all directory data blocks to find the corresponding filenames. After you get the filename of a jpg file, you should again copy the content of that file to an output file, but this time, using the actual filename. For example, if inode number 18 is 'bank-uwcu.jpg', you should create a file 'output/bank-uwcu.jpg' which will be identical to 'output/file-18.jpg'.
+The second part of your task is to find out the filenames of those inodes that represent the jpg files. Note that filenames are not stored in inodes, but in directory 
+data blocks. Thus, after you get the inode numbers of the jpg files, you should scan all directory data blocks to find the corresponding filenames. After you get the
+filename of a jpg file, you should again copy the content of that file to an output file, but this time, using the actual filename. For example, if inode number 18 is
+'bank-uwcu.jpg', you should create a file 'output/bank-uwcu.jpg' which will be identical to 'output/file-18.jpg'.
 
-In summary, in your final output directory, for each jpg file, there should be a file with an inode number as the filename, and another file with the same filename as the actual one.
+In summary, in your final output directory, for each jpg file, there should be a file with an inode number as the filename, and another file with the same filename as
+the actual one.
 
-When your program starts, your program should create the specified output directory. If the directory already exists, print an error message (any message) and exit the program. You can know if a directory exists by using the opendir(name) (Links to an external site.) system call.
+When your program starts, your program should create the specified output directory. If the directory already exists, print an error message (any message) and exit the
+program. You can know if a directory exists by using the opendir(name) (Links to an external site.) system call.
 
 3) Source code and disk images
-We provide a header file that specifies some necessary ext2 data structures. We also provide source code that parses an ext2 disk image and gives you the locations of the inode tables, and some important information such as the number of inodes in a cylinder group, number of inode tables, etc. Please see updates once they are posted.  It will be available at:
+We provide a header file that specifies some necessary ext2 data structures. We also provide source code that parses an ext2 disk image and gives you the locations of 
+the inode tables, and some important information such as the number of inodes in a cylinder group, number of inode tables, etc. Please see updates once they are posted.
+It will be available at: % /p/course/cs537-swift/tests/p5
 
-% /p/course/cs537-swift/tests/p5
 To get you started, the first disk image (image-01) for you to work on; more disk images from the subject that might contain the interesting images will come later. It has two small jpg files in the root directory, one not deleted (./indonesian-flag-extra-small.jpg) and one that has been deleted (./french-flag-small.jpg). It also contains a not deleted larger image in a subdirectory (./pics/architecture_big_ben.jpg). The disk image is available here:
 
 /p/course/cs537-swift/tests/p5/disk_images
@@ -75,6 +87,7 @@ indonesian-flag-extra-small.jpg
 file-12.jpg
 file-13.jpg
 file-14.jpg
+
 You will get a full credit if you copy the correct amount of bytes for each of your output files. In other words, you should reconstruct the jpg files as they were stored in the beginning. To confirm this, you can 'cmp' your output files with the original files (the three jpg files can be obtained from /p/course/cs537-swift/tests/p5/jpg_images/ ). For example:
 
 % cmp output01/french-flag-small.jpg /p/course/cs537-swift/tests/p5/jpg_images/french-flag-small.jpg
